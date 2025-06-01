@@ -74,6 +74,12 @@ Go to http://localhost:8080/ui/console#/sof
 Open http://localhost:8888 and open sql-on-fhir notebook.
 
 
+## Run mini app
+
+```bash
+node run dev
+open http://localhost:7777
+```
 
 
 
