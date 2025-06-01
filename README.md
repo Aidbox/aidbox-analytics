@@ -14,6 +14,7 @@ This will start the following services:
 - PostgreSQL
 - Aidbox
 - Grafana
+- Jupyter
 
 
 Open http://localhost:8080 and login into aidbox.
@@ -25,8 +26,6 @@ node init.js
 ```
 
 Open grafana at http://localhost:3000 and login with admin/admin.
-
-
 
 
 ## Create your view
@@ -69,6 +68,12 @@ Go to http://localhost:8080/ui/console#/sof
   ]
 }
 ```
+
+## Jupyter
+
+Open http://localhost:8888 and open sql-on-fhir notebook.
+
+
 
 
 
