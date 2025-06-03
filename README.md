@@ -19,6 +19,8 @@ This will start the following services:
 
 Open http://localhost:8080 and login into aidbox.
 
+Open [notebook](http://localhost:8080/ui/console#/notebooks/explore?path=https%3A%2F%2Faidbox.app%2FPublishedNotebook%2F1fb0052f-56f3-4c1f-8f1b-6da09e5f5484)
+
 ### load data and install views
 
 ```bash

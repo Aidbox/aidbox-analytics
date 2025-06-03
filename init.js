@@ -12,7 +12,7 @@ const headers = {
 
 async function load(resourceType){
     const startTime = Date.now();
-    const url = `https://storage.googleapis.com/aidbox-public/synthea/v2/10000/fhir/${resourceType}.ndjson.gz`;
+    const url = `https://storage.googleapis.com/aidbox-public/synthea/v2/100/fhir/${resourceType}.ndjson.gz`;
     console.log(`Loading ${resourceType} from ${url}...`);
     const response = await fetch(`${FHIR_SERVER}/fhir/$load`, {
         method: 'POST',
@@ -48,12 +48,14 @@ async function upsert(resource){
     console.log(response.status, responseBody.resourceType);
 }
 const startTime = Date.now();
-// await Promise.all([
-//     load('Patient'),
-//     load('Condition'),
-//     load('Encounter'),
-//     load('MedicationRequest')
-// ]);
+
+await Promise.all([
+    load('Patient'),
+    load('Condition'),
+    load('Encounter'),
+    load('MedicationRequest')
+]);
+
 const endTime = Date.now();
 console.log(`Time taken: ${(endTime - startTime) / 1000} seconds`);
  

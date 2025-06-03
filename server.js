@@ -7,6 +7,9 @@ const FHIR_SERVER = 'http://localhost:8080';
 const USERNAME = 'root';
 const PASSWORD = 'k5hlhmOYr4';
 
+// Serve static files from public directory
+app.use(express.static('public'));
+
 // Create Basic Auth header
 const auth = Buffer.from(`${USERNAME}:${PASSWORD}`).toString('base64');
 const headers = {
@@ -15,6 +18,7 @@ const headers = {
 };
 
 async function sql(query){
+    const startTime = Date.now();
     console.log(`sql: ${query}`)
     const response = await fetch(`${FHIR_SERVER}/$sql`, {
         method: 'POST',
@@ -22,6 +26,8 @@ async function sql(query){
         body: JSON.stringify([query])
     });
     const resp = await response.json();
+    const endTime = Date.now();
+    console.log(`SQL query execution time: ${(endTime - startTime) / 1000} seconds`);
     return resp;
 }
 
@@ -34,9 +40,13 @@ function layout(body){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to My Web Server</title>
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/tailwind.min.js"></script>
     <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="/js/htmx.min.js"></script>
+    <!-- Vega-Lite -->
+    <script src="/js/vega.min.js"></script>
+    <script src="/js/vega-lite.min.js"></script>
+    <script src="/js/vega-embed.min.js"></script>
 </head>
 <body class="p-4">
    <div class="p-4 border-b border-gray-200 mb-4"> <a href="/">Home</a> </div>
@@ -65,7 +75,48 @@ app.get('/dashboard', async (req, res) => {
         return `<a class="text-2xl font-bold text-gray-800 block p-4 hover:bg-gray-100 cursor-pointer"
                  href="/patients_by_gender?gender=${x.gender}">${x.gender} ${x.count}</a>`
     }).join('')
-    res.send(`<div class="">${html}</div>`);
+
+    const spec = {
+        $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+        data: {
+            values: dashboard
+        },
+        mark: 'arc',
+        encoding: {
+            theta: {field: 'count', type: 'quantitative'},
+            color: {field: 'gender', type: 'nominal'}
+        },
+        selection: {
+            gender: {
+                type: 'single',
+                on: 'click',
+                fields: ['gender']
+            }
+        }
+    };
+
+    const vegaHtml = `
+        <div id="vis" class="w-full h-96"></div>
+        <script>
+            vegaEmbed('#vis', ${JSON.stringify(spec)}).then(result => {
+                result.view.addEventListener('click', (event, item) => {
+                    console.log(event, item);
+                    if (item && item.datum) {
+                        window.location.href = '/patients_by_gender?gender=' + item.datum.gender;
+                    }
+                });
+            });
+        </script>
+    `;
+
+    res.send(`<div class="grid grid-cols-1 gap-4">
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            ${html}
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            ${vegaHtml}
+        </div>
+    </div>`);
 });
 
 app.get('/patients_by_gender', async (req, res) => {
