@@ -20,7 +20,7 @@ async function load(resourceType){
         body: JSON.stringify({"source": url})
     });
     console.log(response.status);
-    const responseText = await response.json();
+    const responseText = await response.text();
     console.log(resourceType, responseText);
     const endTime = Date.now();
     console.log(`Time taken for ${resourceType}: ${(endTime - startTime) / 1000} seconds`);
