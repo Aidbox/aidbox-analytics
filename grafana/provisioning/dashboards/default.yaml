@@ -1,0 +1,18 @@
+apiVersion: 1
+providers:
+  # <string> an unique provider name. Required
+  - name: 'TEST Provising test'
+    # <int> Org id. Default to 1
+    orgId: 1
+    # <string> name of the dashboard folder.
+    folder: 'Service'
+    # <string> folder UID. will be automatically generated if not specified
+    folderUid: ''
+    # <string> provider type. Default to 'file'
+    type: file
+    # <int> how often Grafana will scan for changed dashboards
+    updateIntervalSeconds: 10
+    # <bool> allow updating provisioned dashboards from the UI
+    # allowUiUpdates: false #you can set this value as per your need
+    options:
+      path: /etc/grafana/provisioning/dashboards
