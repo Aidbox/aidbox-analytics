@@ -10,9 +10,11 @@ const headers = {
     'Content-Type': 'application/json'
 };
 
+const NUMBER_OF_PATIENTS = 1000;
+
 async function load(resourceType){
     const startTime = Date.now();
-    const url = `https://storage.googleapis.com/aidbox-public/synthea/v2/100/fhir/${resourceType}.ndjson.gz`;
+    const url = `https://storage.googleapis.com/aidbox-public/synthea/v2/${NUMBER_OF_PATIENTS}/fhir/${resourceType}.ndjson.gz`;
     console.log(`Loading ${resourceType} from ${url}...`);
     const response = await fetch(`${FHIR_SERVER}/fhir/$load`, {
         method: 'POST',
@@ -130,4 +132,39 @@ await upsert({
             { name: "type_code", path: "type[0].coding.where(system='http://snomed.info/sct').code" }
         ]
     }]
+})
+
+await upsert({
+    "resource": "MedicationRequest",
+    "id": "medreq",
+    "name": "medreq",
+    "status": "active",
+    "select": [
+        {
+            "column": [
+                {
+                    "name": "id",
+                    "path": "id",
+                    "type": "id"
+                },
+                {
+                    "name": "patient_id",
+                    "path": "subject.id",
+                    "type": "id"
+                },
+                {
+                    "name": "rxnorm_display",
+                    "path": "medication.ofType(CodeableConcept).coding.where(system='http://www.nlm.nih.gov/research/umls/rxnorm').display"
+                },
+                {
+                    "name": "rxnorm_code",
+                    "path": "medication.ofType(CodeableConcept).coding.where(system='http://www.nlm.nih.gov/research/umls/rxnorm').code"
+                },
+                {
+                    "name": "rest",
+                    "path": "$this"
+                }
+            ]
+        }
+    ]
 })
