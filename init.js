@@ -82,10 +82,8 @@ await upsert({
 
 await sql(`
     create or replace view sof.patient_plus  AS 
-      select 
-        *, 
-        DATE_PART('year', AGE(CURRENT_DATE, (dob)::date)) as age 
-      from sof.patient
+     select *, DATE_PART('year', AGE(CURRENT_DATE, (dob)::date)) as age 
+     from sof.patient
 `)
 
 await sql(`
